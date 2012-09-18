@@ -56,6 +56,15 @@ public class Pellet : MonoBehaviour {
 	{
 		ScoreKeeper.Instance.AddPelletPoints(1);
 		Hit = null;
-		Destroy(gameObject);
+
+        Vector2 moveDirection = UnityEngine.Random.insideUnitCircle;
+        iTween.MoveTo(this.gameObject, new Vector3(moveDirection.x * 7f, 0.0f, moveDirection.y * 7f), 1.0f);  
+        iTween.FadeTo(this.gameObject, iTween.Hash("alpha", 0.0f, "time", 0.3f, "onComplete", "fadeComplete", "onCompleteTarget", this.gameObject));
 	}
+
+    protected void fadeComplete()
+    {
+        Destroy(gameObject);
+
+    }
 }

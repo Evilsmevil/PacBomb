@@ -22,6 +22,8 @@ public class NewBomb : MonoBehaviour {
 	//the number of pellets that have been picked up
 	protected List<Pellet> pellets;
 	protected int pelletsPickedUp = 0;
+    protected bool readyToBlow = false;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -84,21 +86,28 @@ public class NewBomb : MonoBehaviour {
 	{
 		if(other.CompareTag(playerTag))
 		{
-			//destroy the remaining pellets
-			foreach(Pellet pellet in pellets)
-			{
-				pellet.ExplodeAsUncollected();	
-			}
-			
-			//destroy the bomb itself
-			//TODO work out a way to dispose the delegate without leaking
-			Destroy(gameObject);
-			Destroy(blastSizeIndicator);
-			
-			DestroyEnemies();
+            ExplodeBomb();
 		}
 	}
-	
+
+    public void ExplodeBomb()
+    {
+        //destroy the collider so we can;t blow up again
+        Destroy(this.collider);
+
+        //destroy the remaining pellets
+        foreach (Pellet pellet in pellets)
+        {
+            pellet.ExplodeAsUncollected();
+        }
+
+        DestroyEnemies();
+
+        //destroy the bomb itself
+        //TODO work out a way to dispose the delegate without leaking
+        Destroy(gameObject);
+
+    }
 	void DestroyEnemies()
 	{
 		//find any enemies
@@ -116,19 +125,7 @@ public class NewBomb : MonoBehaviour {
 			c.gameObject.SendMessage("Kill", enemyScore);
 		}	
 		
-		//get all the bombs that are close enough and blow them up too
-		//find any enemies
-		Collider [] bombs = Physics.OverlapSphere(transform.position, 
-													GetBlastRadius()/2, 
-													bombLayer);	
 		
-		//destroy all the bombs
-		
-	}
-	
-	protected IEnumerator DestroyBombs(Collider [] bombs)
-	{
-			return null;
 	}
 	
 	float GetBlastRadius()

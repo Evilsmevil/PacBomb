@@ -1,0 +1,8 @@
+A:\GitHub\PacBomb\Temp\bin\Release\Assembly-CSharp.dll
+A:\GitHub\PacBomb\Temp\bin\Release\Assembly-CSharp.pdb
+A:\GitHub\PacBomb\Temp\bin\Release\UnityEditor.dll
+A:\GitHub\PacBomb\Temp\bin\Release\UnityEngine.dll
+A:\GitHub\PacBomb\Temp\bin\Release\nunit.framework.dll
+A:\GitHub\PacBomb\obj\Release\Assembly-CSharp.csprojResolveAssemblyReference.cache
+A:\GitHub\PacBomb\obj\Release\Assembly-CSharp.dll
+A:\GitHub\PacBomb\obj\Release\Assembly-CSharp.pdb
