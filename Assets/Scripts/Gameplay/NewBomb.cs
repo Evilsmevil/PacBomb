@@ -128,7 +128,7 @@ public class NewBomb : MonoBehaviour {
 	
 	protected IEnumerator DestroyBombs(Collider [] bombs)
 	{
-			
+			return null;
 	}
 	
 	float GetBlastRadius()
