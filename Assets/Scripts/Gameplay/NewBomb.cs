@@ -12,6 +12,7 @@ public class NewBomb : MonoBehaviour {
 	public string playerTag; //this is the tag that will cause the pellet to get destroyed
 	public float minBlastSize;
 	public LayerMask enemyLayer;
+	public LayerMask bombLayer;
 	//you want something
 	public GameObject blastSizeIndicatorPrefab;
 	protected GameObject blastSizeIndicator;
@@ -114,6 +115,20 @@ public class NewBomb : MonoBehaviour {
 			ScoreKeeper.Instance.AddEnemyPoints(enemyScore);
 			c.gameObject.SendMessage("Kill", enemyScore);
 		}	
+		
+		//get all the bombs that are close enough and blow them up too
+		//find any enemies
+		Collider [] bombs = Physics.OverlapSphere(transform.position, 
+													GetBlastRadius()/2, 
+													bombLayer);	
+		
+		//destroy all the bombs
+		
+	}
+	
+	protected IEnumerator DestroyBombs(Collider [] bombs)
+	{
+			
 	}
 	
 	float GetBlastRadius()
