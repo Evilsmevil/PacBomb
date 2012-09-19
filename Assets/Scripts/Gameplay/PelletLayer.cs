@@ -15,7 +15,7 @@ public class PelletLayer : MonoBehaviour
 	public Pellet pelletObject;
 	public NewBomb bombObject;
 	
-	public void LayPelletTrail(int chainLength, OccupancyGrid grid, Color color)
+	public void LayPelletTrail(int chainLength, OccupancyGrid grid, Color color, Action<NewBomb> onBombDestroy)
 	{
 		Debug.Log("trying to lay " + chainLength + " pellets ");
 		List<Pellet> pelletList = new List<Pellet>(chainLength);	
@@ -27,7 +27,7 @@ public class PelletLayer : MonoBehaviour
 		if(grid.IsSurrounded(startLocation))
 		{
 			//yes? make into a bomb and end
-			AddBomb(grid, startLocation, pelletList, color);
+			AddBomb(grid, startLocation, pelletList, color, onBombDestroy);
 			Debug.Log("ran into a dead end at " + startLocation);
 			return;
 		}
@@ -50,7 +50,7 @@ public class PelletLayer : MonoBehaviour
 			if(grid.IsSurrounded(newLocation))
 			{
 				//yes? make into a bomb. end
-				AddBomb(grid, newLocation, pelletList, color);
+				AddBomb(grid, newLocation, pelletList, color, onBombDestroy);
 				Debug.Log("ran into a dead end at " + newLocation);
 				return;
 			}
@@ -67,7 +67,7 @@ public class PelletLayer : MonoBehaviour
 		//Find random adjacent space
 		GridCoord bombLocation = grid.FindRandomEmptyAdjacentSpace(lastLocation);
 		//put bomb in it
-		AddBomb(grid, bombLocation, pelletList, color);
+		AddBomb(grid, bombLocation, pelletList, color, onBombDestroy);
 	}
 	
 	
@@ -119,12 +119,13 @@ public class PelletLayer : MonoBehaviour
 	}
 	
 	protected void AddBomb(OccupancyGrid grid, GridCoord location, 
-						   List<Pellet> pellets, Color color)
+						   List<Pellet> pellets, Color color, Action<NewBomb> onBombDestroy)
 	{
 		NewBomb newBomb = Instantiate(bombObject) as NewBomb;
 		grid.AddObject(location, newBomb.gameObject);
 		newBomb.renderer.material.color = color;
 		newBomb.AddPellets(pellets);
+        newBomb.bombExploded += onBombDestroy;
 	}
 }
 

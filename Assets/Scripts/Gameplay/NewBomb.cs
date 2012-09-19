@@ -1,6 +1,8 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+
 
 /// <summary>
 /// New bomb is much simpler than old bomb
@@ -23,6 +25,8 @@ public class NewBomb : MonoBehaviour {
 	protected List<Pellet> pellets;
 	protected int pelletsPickedUp = 0;
     protected bool readyToBlow = false;
+
+    public Action<NewBomb> bombExploded;
 
 	// Use this for initialization
 	void Start () 
@@ -94,6 +98,8 @@ public class NewBomb : MonoBehaviour {
     {
         //destroy the collider so we can;t blow up again
         Destroy(this.collider);
+
+        if (bombExploded != null) bombExploded(this);
 
         //destroy the remaining pellets
         foreach (Pellet pellet in pellets)

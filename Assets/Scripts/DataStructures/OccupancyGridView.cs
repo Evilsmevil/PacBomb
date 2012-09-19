@@ -32,7 +32,7 @@ public class OccupancyGridView : MonoBehaviour
 			{
 				Vector3 colorVec = UnityEngine.Random.insideUnitSphere;
 				Color newColor = new Color(colorVec.x, colorVec.y, colorVec.z);
-				pelletLayer.LayPelletTrail(numberOfPelletsPerTrail, grid, newColor);	
+                pelletLayer.LayPelletTrail(numberOfPelletsPerTrail, grid, newColor, OnBombExploded);	
 			}
 		}
 		
@@ -44,6 +44,13 @@ public class OccupancyGridView : MonoBehaviour
 		go.transform.parent = this.transform;
 		go.transform.localPosition = new Vector3(location.x * gridX, 0, location.y * gridY);
 	}
+
+    void OnBombExploded(NewBomb bomb)
+    {
+        Vector3 colorVec = UnityEngine.Random.insideUnitSphere;
+        Color newColor = new Color(colorVec.x, colorVec.y, colorVec.z);
+        pelletLayer.LayPelletTrail(numberOfPelletsPerTrail, grid, newColor, OnBombExploded);	
+    }
 	
 	//Draw the occupancy grid so we can see the extents
 	void OnDrawGizmos()
