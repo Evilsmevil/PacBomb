@@ -145,7 +145,6 @@ public class OccupancyGrid
 		//grid is dirty
 		isDirty = true;
 		
-		Debug.Log("Adding object at " + location.x + ", " + location.y, newObject);
 		//tell any observers that we've updated the view
 		ObjectAdded(location, newObject);
 		

@@ -59,7 +59,6 @@ public class NewBomb : MonoBehaviour {
 		{
 			pellets.Add(p);
 			p.Hit = OnHit;
-			Debug.Log("adding pellets");
 		}
 	}
 	
