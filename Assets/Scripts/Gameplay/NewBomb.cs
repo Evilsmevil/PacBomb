@@ -20,6 +20,11 @@ public class NewBomb : MonoBehaviour {
 	protected GameObject blastSizeIndicator;
 	//the pellets that are attached to this bomb
 	
+	//sounds
+	//noises that the bomb can make
+	public AudioClip bleepSound;
+	public AudioClip explosionSound;
+	
 	public float blastScaleFactor = 4.0f;
 	//the number of pellets that have been picked up
 	protected List<Pellet> pellets;
@@ -66,11 +71,17 @@ public class NewBomb : MonoBehaviour {
 	{
 		pelletsPickedUp++;
 		
+		//we can be blown up by other bombs if pick up a pellet
+		readyToBlow = true;
+		
 		//find the pellet and remove it from the list
 		pellets.Remove(p);
 		
 		//update the explosion prefab
 		UpdateExplosionIndicator();
+		
+		//play a sound
+		Camera.mainCamera.audio.PlayOneShot(bleepSound);
 	}
 	
 	/// <summary>
@@ -89,17 +100,82 @@ public class NewBomb : MonoBehaviour {
 	{
 		if(other.CompareTag(playerTag))
 		{
-            ExplodeBomb();
+			//get a list of bombs to explode
+			List<NewBomb> bombsToExplode = new List<NewBomb>();
+			FindBombs(bombsToExplode);
+			
+			StartCoroutine(ExplodeBombs(bombsToExplode));
 		}
 	}
-
-    public void ExplodeBomb()
+	
+	public IEnumerator ExplodeBombs(List<NewBomb> bombList)
+	{
+		Debug.Log("Going to destroy " + bombList.Count);
+		//now we have our list we can explode our bombs
+		for(int i = 0; i < bombList.Count; ++i)
+		{
+			Debug.Log("Exploding " + bombList[i].name + " in " + (i * 0.2f) + " seconds");
+			bombList[i].ExplodeBomb(); // this will hide the go's not destroy them
+			yield return new WaitForSeconds(0.2f);
+		}
+		
+		//destroy the bomb game objects
+		foreach(NewBomb b in bombList)
+		{
+			Destroy(b.gameObject);	
+		}
+	}
+	
+	public void FindBombs(List<NewBomb> explodeList)
+	{
+		//disable collider
+		collider.enabled = false;
+		//add to the list
+		explodeList.Add(this);
+		List<NewBomb> bombsInRange = FindBombsInRange();
+		
+		//find more bombs
+		foreach(NewBomb bomb in bombsInRange)
+		{
+			//call find bombs on the bombs we've found
+			if(explodeList.Contains(bomb) == false)
+			{
+				bomb.FindBombs(explodeList);
+			}
+		}
+		
+	}
+	
+	public List<NewBomb> FindBombsInRange()
+	{
+		//find any enemies
+		float blastRadius = GetBlastRadius() / 2;
+		Collider [] objects = Physics.OverlapSphere(transform.position, 
+													GetBlastRadius()/2, 
+													bombLayer);	
+		List<NewBomb> bombsInRange = new List<NewBomb>();
+		foreach(Collider collider in objects)
+		{
+			NewBomb possibleBomb = collider.GetComponent<NewBomb>();
+			if(possibleBomb && possibleBomb.readyToBlow)
+			{
+				//there is a bomb
+				bombsInRange.Add(possibleBomb);
+			}
+		}
+		
+		//how many more bombs are there?
+		Debug.Log("there are " + bombsInRange.Count + " bombs in range");
+		return bombsInRange;
+	}
+	
+    public void ExplodeBomb(float delay = 0.0f)
     {
-        //destroy the collider so we can;t blow up again
-        Destroy(this.collider);
-
+		//call the delegate
         if (bombExploded != null) bombExploded(this);
-
+		
+		Camera.mainCamera.audio.PlayOneShot(explosionSound);
+		
         //destroy the remaining pellets
         foreach (Pellet pellet in pellets)
         {
@@ -110,7 +186,9 @@ public class NewBomb : MonoBehaviour {
 
         //destroy the bomb itself
         //TODO work out a way to dispose the delegate without leaking
-        Destroy(gameObject);
+        //Destroy(gameObject);
+		this.renderer.enabled = false;
+		this.blastSizeIndicator.renderer.enabled = false;
 
     }
 	void DestroyEnemies()
@@ -119,7 +197,6 @@ public class NewBomb : MonoBehaviour {
 		Collider [] objects = Physics.OverlapSphere(transform.position, 
 													GetBlastRadius()/2, 
 													enemyLayer);	
-		Debug.Log("Found " + objects.Length + " enemies");
 		//DESTROY
 		foreach (Collider c in objects)
 		{

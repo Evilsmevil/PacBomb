@@ -17,7 +17,6 @@ public class PelletLayer : MonoBehaviour
 	
 	public void LayPelletTrail(int chainLength, OccupancyGrid grid, Color color, Action<NewBomb> onBombDestroy)
 	{
-		Debug.Log("trying to lay " + chainLength + " pellets ");
 		List<Pellet> pelletList = new List<Pellet>(chainLength);	
 		
 		//Find random space
@@ -28,7 +27,6 @@ public class PelletLayer : MonoBehaviour
 		{
 			//yes? make into a bomb and end
 			AddBomb(grid, startLocation, pelletList, color, onBombDestroy);
-			Debug.Log("ran into a dead end at " + startLocation);
 			return;
 		}
 		else //no? make it into a pellet
@@ -51,7 +49,6 @@ public class PelletLayer : MonoBehaviour
 			{
 				//yes? make into a bomb. end
 				AddBomb(grid, newLocation, pelletList, color, onBombDestroy);
-				Debug.Log("ran into a dead end at " + newLocation);
 				return;
 			}
 			else
@@ -80,7 +77,7 @@ public class PelletLayer : MonoBehaviour
 	/// </returns>
 	/// <param name='grid'>
 	/// the occupancy grid you want to get it from
-	/// </param>
+	/// </param>Debv
 	protected GridCoord GetRandomLocation(OccupancyGrid grid)
 	{
 		//right now this is an enxpensive call
@@ -90,7 +87,7 @@ public class PelletLayer : MonoBehaviour
 		{
 			//we're full so don't even bother 
 			//return nonsense
-			Debug.Log("Grid is full!");
+			Debug.LogError("Grid is full!");
 			return new GridCoord(-1,-1);
 		}
 		
