@@ -47,6 +47,11 @@ public class OccupancyGridView : MonoBehaviour
 
     void OnBombExploded(NewBomb bomb)
     {
+        LayNewTrail();
+    }
+
+    public void LayNewTrail()
+    {
         Vector3 colorVec = UnityEngine.Random.insideUnitSphere;
         Color newColor = new Color(colorVec.x, colorVec.y, colorVec.z);
         pelletLayer.LayPelletTrail(numberOfPelletsPerTrail, grid, newColor, OnBombExploded);	

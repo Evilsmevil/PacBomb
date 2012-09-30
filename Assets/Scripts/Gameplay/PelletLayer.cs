@@ -14,7 +14,9 @@ public class PelletLayer : MonoBehaviour
 {
 	public Pellet pelletObject;
 	public NewBomb bombObject;
-	
+    public BombManager bombManager;
+
+
 	public void LayPelletTrail(int chainLength, OccupancyGrid grid, Color color, Action<NewBomb> onBombDestroy)
 	{
 		List<Pellet> pelletList = new List<Pellet>(chainLength);	
@@ -122,7 +124,12 @@ public class PelletLayer : MonoBehaviour
 		grid.AddObject(location, newBomb.gameObject);
 		newBomb.renderer.material.color = color;
 		newBomb.AddPellets(pellets);
-        newBomb.bombExploded += onBombDestroy;
+        //newBomb.bombExploded += onBombDestroy;
+        
+        //add the bomb to the new bomb
+        bombManager.AddBomb(newBomb);
+        newBomb.bombExploded += bombManager.OnBombTriggered;
+        newBomb.pelletPickedUp += bombManager.OnPelletCollected;
 	}
 }
 

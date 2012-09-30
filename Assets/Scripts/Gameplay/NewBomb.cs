@@ -29,10 +29,10 @@ public class NewBomb : MonoBehaviour {
 	//the number of pellets that have been picked up
 	protected List<Pellet> pellets;
 	protected int pelletsPickedUp = 0;
-    protected bool readyToBlow = false;
+    public bool readyToBlow = false;
 
     public Action<NewBomb> bombExploded;
-
+    public Action<NewBomb> pelletPickedUp;
 	// Use this for initialization
 	void Start () 
 	{
@@ -73,7 +73,9 @@ public class NewBomb : MonoBehaviour {
 		
 		//we can be blown up by other bombs if pick up a pellet
 		readyToBlow = true;
-		
+
+        pelletPickedUp(this);
+
 		//find the pellet and remove it from the list
 		pellets.Remove(p);
 		
@@ -93,18 +95,33 @@ public class NewBomb : MonoBehaviour {
 		float blastScale = Mathf.Max(GetBlastRadius(), 1);
 		blastSizeIndicator.transform.localScale = new Vector3(blastScale,
 																  1.0f,
-																  blastScale);	
+																  blastScale);
+		
+		/*List<NewBomb> bombsToExplode = new List<NewBomb>();
+		FindBombs(bombsToExplode);
+		
+		foreach(NewBomb bomb in bombsToExplode)
+		{
+			if(bomb != this && bomb.readyToBlow)
+			{
+                MarkExplodable();
+			}
+			bomb.collider.enabled = true;
+		}*/
 	}
+
+    public void MarkExplodable()
+    {
+        renderer.material.color = Color.red;
+    }
 	
 	void OnTriggerEnter(Collider other)
 	{
 		if(other.CompareTag(playerTag))
 		{
-			//get a list of bombs to explode
-			List<NewBomb> bombsToExplode = new List<NewBomb>();
-			FindBombs(bombsToExplode);
-			
-			StartCoroutine(ExplodeBombs(bombsToExplode));
+            //call the delegate - bomb manager now deals with 
+            //destruction
+            if (bombExploded != null) bombExploded(this);
 		}
 	}
 	
@@ -172,7 +189,7 @@ public class NewBomb : MonoBehaviour {
     public void ExplodeBomb(float delay = 0.0f)
     {
 		//call the delegate
-        if (bombExploded != null) bombExploded(this);
+        //if (bombExploded != null) bombExploded(this);
 		
 		Camera.mainCamera.audio.PlayOneShot(explosionSound);
 		
@@ -182,7 +199,7 @@ public class NewBomb : MonoBehaviour {
             pellet.ExplodeAsUncollected();
         }
 
-        DestroyEnemies();
+        //DestroyEnemies();
 
         //destroy the bomb itself
         //TODO work out a way to dispose the delegate without leaking
@@ -191,12 +208,30 @@ public class NewBomb : MonoBehaviour {
 		this.blastSizeIndicator.renderer.enabled = false;
 
     }
+
+    public List<GameObject> FindEnemies()
+    {
+        //find any enemies
+        Collider[] objects = Physics.OverlapSphere(transform.position,
+                                                    GetBlastRadius() / 2,
+                                                    enemyLayer);
+
+        List<GameObject> enemies = new List<GameObject>();
+        foreach (Collider c in objects)
+        {
+            enemies.Add(c.gameObject);
+        }
+
+        return enemies;
+    }
+
 	void DestroyEnemies()
 	{
-		//find any enemies
-		Collider [] objects = Physics.OverlapSphere(transform.position, 
-													GetBlastRadius()/2, 
-													enemyLayer);	
+        //find any enemies
+        Collider[] objects = Physics.OverlapSphere(transform.position,
+                                                    GetBlastRadius() / 2,
+                                                    enemyLayer);
+
 		//DESTROY
 		foreach (Collider c in objects)
 		{
@@ -210,7 +245,7 @@ public class NewBomb : MonoBehaviour {
 		
 	}
 	
-	float GetBlastRadius()
+	public float GetBlastRadius()
 	{
 		return pelletsPickedUp * blastScaleFactor;	
 	}

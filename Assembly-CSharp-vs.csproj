@@ -48,6 +48,7 @@
      <Compile Include="Assets\Scripts\DataStructures\OccupancyGridView.cs" />
      <Compile Include="Assets\Scripts\GUI\ScoreDisplay.cs" />
      <Compile Include="Assets\Scripts\GUI\ScoreLabel.cs" />
+     <Compile Include="Assets\Scripts\GameManager\BombManager.cs" />
      <Compile Include="Assets\Scripts\Gameplay\BalanceSettings.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Bomb.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Defs.cs" />

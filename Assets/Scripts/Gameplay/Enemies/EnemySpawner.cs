@@ -4,6 +4,7 @@ using System.Collections;
 public class EnemySpawner : MonoBehaviour {
 	
 	public GameObject spawnObject;
+    public BombManager bombManager;
 	public float timeDelay;
 	public float increaseSpeedEvery;
 	public float timeStep;
@@ -43,7 +44,10 @@ public class EnemySpawner : MonoBehaviour {
 			
 			GameObject newObj = (GameObject) Instantiate(spawnObject, newPos, transform.rotation);
 			newObj.transform.parent = transform;
-		
+		    
+            //tell the game manager about the new enemy we spawned
+            bombManager.AddEnemy(newObj);
+
 			yield return new WaitForSeconds(timeDelay);
 		}
 	}
