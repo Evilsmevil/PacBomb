@@ -30,6 +30,9 @@ public class NewBomb : MonoBehaviour {
 	protected List<Pellet> pellets;
 	protected int pelletsPickedUp = 0;
     public bool readyToBlow = false;
+    public List<GameObject> LinkIndicators { get; set; }
+    protected HashSet<NewBomb> linkedBombs;
+
 
     public Action<NewBomb> bombExploded;
     public Action<NewBomb> pelletPickedUp;
@@ -44,12 +47,38 @@ public class NewBomb : MonoBehaviour {
 			blastSizeIndicator = Instantiate(blastSizeIndicatorPrefab) as GameObject;
 			blastSizeIndicator.transform.parent = this.transform;
 			blastSizeIndicator.transform.localPosition = blastSizeIndicatorPrefab.transform.localPosition;
-		}
+
+            //give it a little tint so it's possible to tell which blast radius is which
+            Color tintColor = new Color(this.renderer.material.color.r,
+                                        this.renderer.material.color.g,
+                                        this.renderer.material.color.b,
+                                        blastSizeIndicator.renderer.material.color.a);
+
+            blastSizeIndicator.renderer.material.color = tintColor;
+        }
 		else
 		{
 			Debug.LogError("No blast size indicator attached. please attach one");	
 		}
+
+        LinkIndicators = new List<GameObject>();
+        linkedBombs = new HashSet<NewBomb>();
 	}
+
+    public void Reset()
+    {
+        bombExploded = null;
+        pelletPickedUp = null;
+
+        DestroyBombLinks();
+        foreach (Pellet p in pellets)
+        {
+            Destroy(p.gameObject);
+        }
+        pellets.Clear();
+
+        Destroy(this.gameObject);
+    }
 	
 	public void AddPellets(List<Pellet> newPellets)
 	{
@@ -93,26 +122,18 @@ public class NewBomb : MonoBehaviour {
 	{
 		//assuming a 1x1x1 unit sphere
 		float blastScale = Mathf.Max(GetBlastRadius(), 1);
-		blastSizeIndicator.transform.localScale = new Vector3(blastScale,
-																  1.0f,
-																  blastScale);
-		
-		/*List<NewBomb> bombsToExplode = new List<NewBomb>();
-		FindBombs(bombsToExplode);
-		
-		foreach(NewBomb bomb in bombsToExplode)
-		{
-			if(bomb != this && bomb.readyToBlow)
-			{
-                MarkExplodable();
-			}
-			bomb.collider.enabled = true;
-		}*/
+        if (blastSizeIndicator)
+        {
+            blastSizeIndicator.transform.localScale = new Vector3(blastScale,
+                                                                  1.0f,
+                                                                  blastScale);
+        }
 	}
 
     public void MarkExplodable()
     {
-        renderer.material.color = Color.red;
+        //Don't do anything for now - maybe we will add a highlight effect later
+        //renderer.material.color = Color.red;
     }
 	
 	void OnTriggerEnter(Collider other)
@@ -127,7 +148,6 @@ public class NewBomb : MonoBehaviour {
 	
 	public IEnumerator ExplodeBombs(List<NewBomb> bombList)
 	{
-		Debug.Log("Going to destroy " + bombList.Count);
 		//now we have our list we can explode our bombs
 		for(int i = 0; i < bombList.Count; ++i)
 		{
@@ -249,5 +269,47 @@ public class NewBomb : MonoBehaviour {
 	{
 		return pelletsPickedUp * blastScaleFactor;	
 	}
+
+    public void DestroyBombLinks()
+    {
+        foreach(GameObject go in LinkIndicators)
+        {
+            if (go) //it might be null because it was destroyed by another bomb
+            {
+                Destroy(go);
+            }
+        }
+
+        linkedBombs.Clear();
+    }
+
+    public void AddBombLink(NewBomb otherBomb, LineRenderer linkLine)
+    {
+        //only add the bomb if we've not already added it
+        if (linkedBombs.Contains(otherBomb) == false)
+        {
+            //create a transparent colour for the end of the bomb that is not active
+            Color endColor = otherBomb.renderer.material.color;
+            Color transparentEnd = new Color(endColor.r, endColor.g, endColor.b, 0.0f);
+
+            //create the link
+            LineRenderer newRenderer = Instantiate(linkLine) as LineRenderer;
+            newRenderer.SetVertexCount(2);
+            newRenderer.SetPosition(0, this.transform.position);
+            newRenderer.SetPosition(1, otherBomb.transform.position);
+            newRenderer.SetWidth(1.0f, 0.0f);
+            newRenderer.SetColors(this.renderer.material.color, otherBomb.renderer.material.color);
+
+            newRenderer.transform.parent = this.transform;
+            //we add the line to both origin and destination because we want to to blow up if either of the bombs
+            //are destroyed
+            this.LinkIndicators.Add(newRenderer.gameObject);
+            otherBomb.LinkIndicators.Add(newRenderer.gameObject);
+
+            //add to the set of bombs we are linked to (so we can't do it multiple times)
+            linkedBombs.Add(otherBomb);
+        }
+
+    }
 	
 }

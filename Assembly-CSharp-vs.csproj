@@ -49,11 +49,14 @@
      <Compile Include="Assets\Scripts\GUI\ScoreDisplay.cs" />
      <Compile Include="Assets\Scripts\GUI\ScoreLabel.cs" />
      <Compile Include="Assets\Scripts\GameManager\BombManager.cs" />
+     <Compile Include="Assets\Scripts\GameManager\GameManager.cs" />
      <Compile Include="Assets\Scripts\Gameplay\BalanceSettings.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Bomb.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Defs.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Enemies\BaseEnemy.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Enemies\EnemySpawner.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Enemies\Homer.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Enemies\Rusher.cs" />
      <Compile Include="Assets\Scripts\Gameplay\NewBomb.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Pellet.cs" />
      <Compile Include="Assets\Scripts\Gameplay\PelletLayer.cs" />

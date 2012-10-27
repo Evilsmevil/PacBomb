@@ -1,9 +1,10 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class EnemySpawner : MonoBehaviour {
 	
-	public GameObject spawnObject;
+	public List<GameObject> spawnObjects;
     public BombManager bombManager;
 	public float timeDelay;
 	public float increaseSpeedEvery;
@@ -13,13 +14,24 @@ public class EnemySpawner : MonoBehaviour {
 	
 	GameObject player;
 	
+    protected float initialTimeDelay;
+    
 	// Use this for initialization
 	void Start () 
 	{
 		StartCoroutine(SpawnEnemy());
 		StartCoroutine(IncreaseTime());
 	}
-	
+
+    public void Reset()
+    {
+        StopAllCoroutines();
+
+        timeDelay = initialTimeDelay;
+        StartCoroutine(SpawnEnemy());
+        StartCoroutine(IncreaseTime());
+    }
+    
 	// Update is called once per frame
 	void Awake () 
 	{
@@ -42,7 +54,10 @@ public class EnemySpawner : MonoBehaviour {
 				}
 			}
 			
-			GameObject newObj = (GameObject) Instantiate(spawnObject, newPos, transform.rotation);
+            //get a random object
+            GameObject nextEnemy = spawnObjects[UnityEngine.Random.Range(0, spawnObjects.Count)];
+
+            GameObject newObj = (GameObject)Instantiate(nextEnemy, newPos, transform.rotation);
 			newObj.transform.parent = transform;
 		    
             //tell the game manager about the new enemy we spawned

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
 /// <summary>
 /// This controls the player character
@@ -19,14 +20,15 @@ public class PlayerController : MonoBehaviour {
 	public bool useLastDirection = true;
 	public float deadZone = 0.1f; //the min amount of a direction to consider it pressed
 	Vector3 lastDirection;
-	
+
+    public bool alive = false;
 	public bool invicible = false;
-	
+    public Action<PlayerController> OnPlayerDied;
 	//for debug
 	public Vector3 currentVelocity;
 	// Use this for initialization
 	void Start () {
-	
+        alive = true;
 		lastDirection = Vector3.zero;
 		this.rigidbody.isKinematic = true;
 	}
@@ -109,8 +111,29 @@ public class PlayerController : MonoBehaviour {
 			Time.timeScale = 1.0f;	
 		}
 	}
-	
-	
+
+    public void PlayerHit(GameObject hitter)
+    {
+        if (OnPlayerDied != null)
+        {
+            OnPlayerDied(this);
+        }
+        this.gameObject.SetActiveRecursively(false);
+        renderer.enabled = false;
+        collider.enabled = false;
+        alive = false;
+    }
+
+    public void Reset()
+    {
+        alive = true;
+        collider.enabled = true;
+        renderer.enabled = true;
+        this.gameObject.SetActiveRecursively(true);
+        rigidbody.position = new Vector3(0, rigidbody.position.y, 0);
+        lastDirection = Vector3.zero;
+
+    }
 	public void ModifyMoveSpeedByScalar(float multiplier)
 	{
 		moveSpeed *= multiplier	;

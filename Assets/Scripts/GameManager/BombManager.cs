@@ -23,6 +23,23 @@ public class BombManager : MonoBehaviour {
         //should we check here to see if the bomb could be in range and be primed?
     }
 
+    public void Reset()
+    {
+        foreach (NewBomb bomb in bombsInPlay)
+        {
+            bomb.Reset();
+        }
+        bombsInPlay.Clear();
+        foreach (GameObject enemy in enemiesInPlay)
+        {
+            Destroy(enemy);
+        }
+        enemiesInPlay.Clear();
+
+        occupancyGridView.Reset();
+    }
+
+
     /// <summary>
     /// Having enemies in a cetralised location makes it 
     /// faster to 
@@ -34,7 +51,7 @@ public class BombManager : MonoBehaviour {
     }
 
 	// Use this for initialization
-	void Start () 
+	void Awake () 
     {
         bombsInPlay = new HashSet<NewBomb>();
         enemiesInPlay = new HashSet<GameObject>();
@@ -54,6 +71,8 @@ public class BombManager : MonoBehaviour {
         //find all the unique enemies in range of the bombs
         List<GameObject> enemies = new List<GameObject>(FindEnemies(bombsToExplode));
 
+        DestroyBombLinks(bombsToExplode);
+
         //destroy bombs and enemies in a way that looks cool
         DestroyEnemies(enemies);
 
@@ -67,6 +86,14 @@ public class BombManager : MonoBehaviour {
         bomb.FindBombs(bombsFound);
 
         return bombsFound;
+    }
+
+    void DestroyBombLinks(List<NewBomb> bombList)
+    {
+        foreach (NewBomb bomb in bombList)
+        {
+            bomb.DestroyBombLinks();
+        }
     }
 
     void DestroyBombs(List<NewBomb> bombs, NewBomb startBomb)
@@ -118,7 +145,7 @@ public class BombManager : MonoBehaviour {
     {
         //need to know which bomb it was connected to?
         float blastRadius = owner.GetBlastRadius();
-        //check to see if any bombs are in range
+        //check to see if any bombs are in range of the bomb that just got a pellet collected
         foreach (NewBomb bomb in bombsInPlay)
         {
             //check to see if bombs are in range
@@ -131,16 +158,40 @@ public class BombManager : MonoBehaviour {
                 CreateLink(owner, bomb);
             }
         }
+
+
+        //if a bomb has just been activated then we need to check to see
+        //if it falls under radius of any other bombs
+        //check to see if any bombs are in range of the bomb that just got a pellet collected
+        foreach (NewBomb bomb in bombsInPlay)
+        {
+            float blastRad = bomb.GetBlastRadius();
+            //check to see if bombs are in range
+            float distanceBetweenBombs = Vector3.Distance(bomb.transform.position, owner.transform.position);
+            if (distanceBetweenBombs < blastRad / 2 && bomb != owner)
+            {
+                //it's in range so lets mark it as such
+                owner.MarkExplodable();
+                //create line link
+                CreateLink(bomb, owner);
+            }
+        }
     }
 
     void CreateLink(NewBomb origin, NewBomb destination)
     {
-        LineRenderer newRenderer = Instantiate(linkLine) as LineRenderer;
+        origin.AddBombLink(destination, linkLine);
+
+        /*LineRenderer newRenderer = Instantiate(linkLine) as LineRenderer;
         newRenderer.SetVertexCount(2);
         newRenderer.SetPosition(0, origin.transform.position);
         newRenderer.SetPosition(1, destination.transform.position);
         newRenderer.SetColors(origin.renderer.material.color, destination.renderer.material.color);
 
         newRenderer.transform.parent = origin.transform;
+        //we add the line to both origin and destination because we want to to blow up if either of the bombs
+        //are destroyed
+        origin.LinkIndicators.Add(newRenderer.gameObject);
+        destination.LinkIndicators.Add(newRenderer.gameObject);*/
     }
 }

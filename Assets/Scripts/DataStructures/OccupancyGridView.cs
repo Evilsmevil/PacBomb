@@ -21,22 +21,31 @@ public class OccupancyGridView : MonoBehaviour
 	
 	void Start()
 	{
-		//create the grid	
-		grid = new OccupancyGrid(gridHeight, gridWidth);
-		grid.ObjectAdded += OnObjectAdded;
-		
-		
-		if(pelletLayer != null)
-		{
-			for(int i = 0; i < 3; ++i)
-			{
-				Vector3 colorVec = UnityEngine.Random.insideUnitSphere;
-				Color newColor = new Color(colorVec.x, colorVec.y, colorVec.z);
-                pelletLayer.LayPelletTrail(numberOfPelletsPerTrail, grid, newColor, OnBombExploded);	
-			}
-		}
-		
+        CreateInitialLayout();
 	}
+
+    public void Reset()
+    {
+        CreateInitialLayout();
+    }
+
+    void CreateInitialLayout()
+    {
+        //create the grid	
+        grid = new OccupancyGrid(gridHeight, gridWidth);
+        grid.ObjectAdded += OnObjectAdded;
+
+
+        if (pelletLayer != null)
+        {
+            for (int i = 0; i < 3; ++i)
+            {
+                Vector3 colorVec = UnityEngine.Random.insideUnitSphere;
+                Color newColor = new Color(colorVec.x, colorVec.y, colorVec.z);
+                pelletLayer.LayPelletTrail(numberOfPelletsPerTrail, grid, newColor, OnBombExploded);
+            }
+        }
+    }
 	
 	void OnObjectAdded(GridCoord location, GameObject go)
 	{

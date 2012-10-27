@@ -94,6 +94,12 @@ public class ScoreKeeper
 			+  " enemies : " + enemyScore;
 						
 	}
+
+    public void Reset()
+    {
+        score = 0;	//total score
+        multiplier = 1;
+    }
 }
 
 	
