@@ -47,14 +47,14 @@ public class Pellet : MonoBehaviour {
 		Hit = null;
 		//destroy the pellet
 		//give the player a point for being so good
-		ScoreKeeper.Instance.AddPelletPoints(2);
+		ScoreKeeper.Instance.AddPelletPoints(ScoreKeeper.pointsPerPellet);
 		Destroy(gameObject);
 			
 	}
 	
 	public void ExplodeAsUncollected()
 	{
-		ScoreKeeper.Instance.AddPelletPoints(1);
+		ScoreKeeper.Instance.AddPelletPoints(0);
 		Hit = null;
 
         Vector2 moveDirection = UnityEngine.Random.insideUnitCircle;

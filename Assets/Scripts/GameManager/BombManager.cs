@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+[AddComponentMenu("Level Generation/Bomb Manager")]
 /// <summary>
 /// This class is the main orchestrator of bomb
 /// choreography. It is responsible for co-ordinating
@@ -12,24 +13,19 @@ using System.Collections.Generic;
 public class BombManager : MonoBehaviour {
 
     public OccupancyGridView occupancyGridView;
+	public LayoutStrategy currentLayoutStrategy;
     public LineRenderer linkLine;
-    protected HashSet<NewBomb> bombsInPlay;
     protected HashSet<GameObject> enemiesInPlay;
 
     public void AddBomb(NewBomb bomb)
     {
-        bombsInPlay.Add(bomb);
-        
+        currentLayoutStrategy.AddBomb(bomb);
         //should we check here to see if the bomb could be in range and be primed?
     }
 
     public void Reset()
     {
-        foreach (NewBomb bomb in bombsInPlay)
-        {
-            bomb.Reset();
-        }
-        bombsInPlay.Clear();
+		currentLayoutStrategy.Reset();
         foreach (GameObject enemy in enemiesInPlay)
         {
             Destroy(enemy);
@@ -53,11 +49,13 @@ public class BombManager : MonoBehaviour {
 	// Use this for initialization
 	void Awake () 
     {
-        bombsInPlay = new HashSet<NewBomb>();
         enemiesInPlay = new HashSet<GameObject>();
 	}
 	
-
+	void Start()
+	{
+		currentLayoutStrategy.CreateInitialLayout();	
+	}
     /// <summary>
     /// This code should deal with destroying a set of bombs and then 
     /// calculating the score and dealing with all the enemies
@@ -101,8 +99,7 @@ public class BombManager : MonoBehaviour {
         //remove bombs from the manager
         foreach (NewBomb bomb in bombs)
         {
-            bombsInPlay.Remove(bomb);
-            occupancyGridView.LayNewTrail();
+			currentLayoutStrategy.OnBombDestroyed(bomb);
         }
 
         //send all this information somwhere so that the score can be calculated
@@ -146,7 +143,7 @@ public class BombManager : MonoBehaviour {
         //need to know which bomb it was connected to?
         float blastRadius = owner.GetBlastRadius();
         //check to see if any bombs are in range of the bomb that just got a pellet collected
-        foreach (NewBomb bomb in bombsInPlay)
+        foreach (NewBomb bomb in currentLayoutStrategy.bombsInPlay)
         {
             //check to see if bombs are in range
             float distanceBetweenBombs = Vector3.Distance(bomb.transform.position, owner.transform.position);
@@ -163,7 +160,7 @@ public class BombManager : MonoBehaviour {
         //if a bomb has just been activated then we need to check to see
         //if it falls under radius of any other bombs
         //check to see if any bombs are in range of the bomb that just got a pellet collected
-        foreach (NewBomb bomb in bombsInPlay)
+        foreach (NewBomb bomb in currentLayoutStrategy.bombsInPlay)
         {
             float blastRad = bomb.GetBlastRadius();
             //check to see if bombs are in range

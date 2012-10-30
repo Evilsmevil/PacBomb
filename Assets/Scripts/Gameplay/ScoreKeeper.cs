@@ -5,6 +5,9 @@ public class ScoreKeeper
 {
     private static ScoreKeeper instance;
     
+	public static int pointsPerPellet = 100;
+	public static int baseBombPoints = 50;
+	
     public ScoreKeeper () 
     {
         if (instance != null)

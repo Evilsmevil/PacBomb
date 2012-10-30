@@ -93,6 +93,8 @@ public class NewBomb : MonoBehaviour {
 		{
 			pellets.Add(p);
 			p.Hit = OnHit;
+			//parent the pellet to the bomb
+			p.transform.parent = transform;
 		}
 	}
 	
@@ -207,10 +209,7 @@ public class NewBomb : MonoBehaviour {
 	}
 	
     public void ExplodeBomb(float delay = 0.0f)
-    {
-		//call the delegate
-        //if (bombExploded != null) bombExploded(this);
-		
+    {		
 		Camera.mainCamera.audio.PlayOneShot(explosionSound);
 		
         //destroy the remaining pellets
@@ -226,6 +225,10 @@ public class NewBomb : MonoBehaviour {
         //Destroy(gameObject);
 		this.renderer.enabled = false;
 		this.blastSizeIndicator.renderer.enabled = false;
+		
+		//add to the score - always make bomb worth at least 1 pellets worth of points
+		if(pelletsPickedUp == 0) pelletsPickedUp = 1;
+		ScoreKeeper.Instance.AddBombPoints(pelletsPickedUp * ScoreKeeper.baseBombPoints);
 
     }
 

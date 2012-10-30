@@ -21,22 +21,23 @@ public class OccupancyGridView : MonoBehaviour
 	
 	void Start()
 	{
-        CreateInitialLayout();
+        Initialise();
 	}
 
     public void Reset()
     {
-        CreateInitialLayout();
+        Initialise();
     }
 
-    void CreateInitialLayout()
+    void Initialise()
     {
         //create the grid	
+		//TODO this probably leaks
         grid = new OccupancyGrid(gridHeight, gridWidth);
         grid.ObjectAdded += OnObjectAdded;
 
 
-        if (pelletLayer != null)
+        /*if (pelletLayer != null)
         {
             for (int i = 0; i < 3; ++i)
             {
@@ -44,7 +45,7 @@ public class OccupancyGridView : MonoBehaviour
                 Color newColor = new Color(colorVec.x, colorVec.y, colorVec.z);
                 pelletLayer.LayPelletTrail(numberOfPelletsPerTrail, grid, newColor, OnBombExploded);
             }
-        }
+        }*/
     }
 	
 	void OnObjectAdded(GridCoord location, GameObject go)
@@ -61,10 +62,15 @@ public class OccupancyGridView : MonoBehaviour
 
     public void LayNewTrail()
     {
-        Vector3 colorVec = UnityEngine.Random.insideUnitSphere;
-        Color newColor = new Color(colorVec.x, colorVec.y, colorVec.z);
-        pelletLayer.LayPelletTrail(numberOfPelletsPerTrail, grid, newColor, OnBombExploded);	
+		LayNewTrail(numberOfPelletsPerTrail);
     }
+	
+	public void LayNewTrail(int numPellets)
+	{
+		Vector3 colorVec = UnityEngine.Random.insideUnitSphere;
+        Color newColor = new Color(colorVec.x, colorVec.y, colorVec.z);
+        pelletLayer.LayPelletTrail(numPellets, grid, newColor, OnBombExploded);		
+	}
 	
 	//Draw the occupancy grid so we can see the extents
 	void OnDrawGizmos()

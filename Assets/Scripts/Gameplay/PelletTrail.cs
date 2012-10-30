@@ -205,11 +205,12 @@ public class PelletTrail : MonoBehaviour {
 	
 	
 	/// <summary>
-	/// Currently you get 1 point for each pellet * the number of pellets you got before hitting the bomb
+	/// Currently you get 100 points for each pellet and the bomb is worth
+	/// the number of pellets you hit * 100
 	/// </summary>
 	int CalculateScore()
 	{
-		int score = GetTotalPelletsHit() * GetTotalPelletsHit(); 
+		int score = GetTotalPelletsHit() * 100;
 		
 		return score;
 	}
