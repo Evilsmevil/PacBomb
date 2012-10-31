@@ -13,7 +13,7 @@ public abstract class LayoutStrategy : MonoBehaviour
 		bombsInPlay.Remove(destroyedBomb);
 	}
 	
-	protected virtual void Start()
+	protected virtual void Awake()
 	{
 		bombsInPlay = new HashSet<NewBomb>();
 	}

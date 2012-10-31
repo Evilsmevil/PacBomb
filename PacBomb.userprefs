@@ -1,6 +1,16 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\GameManager\LayoutStrategy.cs">
+    <Files>
+      <File FileName="Assets\Scripts\GameManager\BombManager.cs" Line="28" Column="29" />
+      <File FileName="Assets\Scripts\GameManager\LayoutStrategy.cs" Line="35" Column="25" />
+      <File FileName="Assets\Scripts\GameManager\ReplacementStrategy.cs" Line="6" Column="40" />
+      <File FileName="Assets\Scripts\DataStructures\OccupancyGridView.cs" Line="48" Column="12" />
+      <File FileName="Assets\Scripts\GameManager\RefillWhenEmptyStrategy.cs" Line="19" Column="49" />
+      <File FileName="Assets\Scripts\Gameplay\PelletLayer.cs" Line="126" Column="16" />
+      <File FileName="Assets\Scripts\Gameplay\NewBomb.cs" Line="80" Column="34" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="C:\Users\CW2S1E\Documents\GitHub\PacBomb\Assets\Scripts\Gameplay\NewBomb.cs" line="115" />
