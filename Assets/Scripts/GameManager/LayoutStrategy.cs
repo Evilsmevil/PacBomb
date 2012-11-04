@@ -44,4 +44,20 @@ public abstract class LayoutStrategy : MonoBehaviour
 			occupancyGrid.LayNewTrail(8);
 		}
 	}
+
+    /// <summary>
+    /// This is used to cleanup any objects we might be doing stuff with when
+    /// we create a new strategy
+    /// </summary>
+    public virtual void CleanupStrategy(LayoutStrategy newStrategy)
+    {
+        //transfer all the bombs to the bombs in play dataset over to the new strategy
+        foreach (NewBomb bomb in bombsInPlay)
+        {
+            newStrategy.bombsInPlay.Add(bomb);
+        }
+
+        //clear the bomb set and reset any other variables
+        bombsInPlay.Clear();
+    }
 }

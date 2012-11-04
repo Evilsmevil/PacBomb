@@ -13,6 +13,7 @@ using System.Collections.Generic;
 public class BombManager : MonoBehaviour {
 
     public OccupancyGridView occupancyGridView;
+    public List<LayoutStrategy> strategyList;
 	public LayoutStrategy currentLayoutStrategy;
     public LineRenderer linkLine;
     protected HashSet<GameObject> enemiesInPlay;
@@ -51,11 +52,20 @@ public class BombManager : MonoBehaviour {
     {
         enemiesInPlay = new HashSet<GameObject>();
 	}
-	
+
+    LayoutStrategy GetRandomStrategy()
+    {
+        int randomIndex = UnityEngine.Random.Range(0, strategyList.Count - 1);
+        return strategyList[randomIndex];
+    }
+
 	void Start()
 	{
+        //pick a strategy
+        currentLayoutStrategy = GetRandomStrategy();
 		currentLayoutStrategy.CreateInitialLayout();	
 	}
+
     /// <summary>
     /// This code should deal with destroying a set of bombs and then 
     /// calculating the score and dealing with all the enemies
@@ -63,6 +73,10 @@ public class BombManager : MonoBehaviour {
     /// <param name="bomb"></param>
     public void OnBombTriggered(NewBomb bomb)
     {
+        LayoutStrategy nextStrategy = GetRandomStrategy();
+        currentLayoutStrategy.CleanupStrategy(nextStrategy);
+        currentLayoutStrategy = nextStrategy;
+
         //get a list of bombs to explode
         List<NewBomb> bombsToExplode = FindConnectedBombs(bomb);
         

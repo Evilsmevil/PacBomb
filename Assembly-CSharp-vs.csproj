@@ -53,6 +53,7 @@
      <Compile Include="Assets\Scripts\GameManager\LayoutStrategy.cs" />
      <Compile Include="Assets\Scripts\GameManager\RefillWhenEmptyStrategy.cs" />
      <Compile Include="Assets\Scripts\GameManager\ReplacementStrategy.cs" />
+     <Compile Include="Assets\Scripts\GameManager\TimeRefillStrategy.cs" />
      <Compile Include="Assets\Scripts\Gameplay\BalanceSettings.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Bomb.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Defs.cs" />
