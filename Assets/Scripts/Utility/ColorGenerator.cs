@@ -12,11 +12,18 @@ public class ColorGenerator : MonoBehaviour
     public float s;
     public float v;
 
+    float goldenRatio = 0.618033988749895f;
+
     public void GenerateColor()
     {
-        generatedColor = ColorUtilities.HSVToRGBTom(UnityEngine.Random.Range(0f,1f),
-            UnityEngine.Random.Range(0f, 1f),
-            UnityEngine.Random.Range(0f, 1f));
+        float rand = UnityEngine.Random.Range(0f, 1f);
+        rand += goldenRatio;
+        rand = rand %1;
+        generatedColor = ColorUtilities.HSVtoRGB(rand,
+           0.5f,
+           0.95f);
+
+        ColorUtilities.HSVtoRGB(0.5f, 0.5f, 0.5f);
     }
 
     public void Update()

@@ -3,10 +3,12 @@ using UnityEngine;
 
 public class ColorUtilities
 {
+    public static float brightnessBoost = 0.3f;
+    
     //convert hsv colorspace coordinates to RGB
     //this function is converted from a function given at
     //http://martin.ankerl.com/2009/12/09/how-to-create-random-colors-programmatically/
-    public static Color HSVToRGB(float h, float s, float v)
+    /*public static Color HSVToRGB(float h, float s, float v)
     {
         int h_i = (int) h * 6;
         float f = h*6 - h_i;
@@ -42,7 +44,7 @@ public class ColorUtilities
 
         return new Color(r, g, b);
 
-    }
+    }*/
 
     public static Color HSVToRGBTom(float h, float s, float v)
     {
@@ -94,5 +96,62 @@ public class ColorUtilities
         Debug.Log("RGB output is " + finalColor);
 
         return finalColor;
+    }
+
+    public static Color HSVtoRGB(float h, float s, float v)
+    {
+        Debug.Log("Hsv input is H:" + h + " S:" + s + " V:" + v);
+        float r,g, b;
+        int i;
+        float f, p, q, t;
+        if (s == 0)
+        {
+            // achromatic (grey)
+            r = g = b = v;
+            return new Color(r,g,b);
+        }
+        h /= 60;			// sector 0 to 5
+        i = (int) Mathf.Floor(h);
+        f = h - i;			// factorial part of h
+        p = v * (1 - s);
+        q = v * (1 - s * f);
+        t = v * (1 - s * (1 - f));
+        switch (i)
+        {
+            case 0:
+                r = v;
+                g = t;
+                b = p;
+                break;
+            case 1:
+                r = q;
+                g = v;
+                b = p;
+                break;
+            case 2:
+                r = p;
+                g = v;
+                b = t;
+                break;
+            case 3:
+                r = p;
+                g = q;
+                b = v;
+                break;
+            case 4:
+                r = t;
+                g = p;
+                b = v;
+                break;
+            default:		// case 5:
+                r = v;
+                g = p;
+                b = q;
+                break;
+        }
+
+        
+        Debug.Log("RGB output is R:" + r + " G:" + g + " B:" + b);
+        return new Color(r, g, b);
     }
 }

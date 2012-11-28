@@ -31,13 +31,13 @@ public class OccupancyGrid
 		{
 			for(int j = 0; j < GetWidth(); ++j)
 			{
-				grid[i,j] = new GridSpace();		
+				grid[j,i] = new GridSpace();		
 			}
 		}	
 	}
 	public int GetHeight()
 	{
-		return grid.GetLength(0);	
+		return grid.GetLength(1);	
 	}
 	
 	/// <summary>
@@ -48,7 +48,7 @@ public class OccupancyGrid
 	/// </returns>
 	public int GetWidth()
 	{
-		return grid.GetLength(1);	
+		return grid.GetLength(0);	
 	}
 	
 	public bool IsOccupied(GridCoord location)
@@ -56,8 +56,16 @@ public class OccupancyGrid
 		//sanity
 		if(OutOfBounds(location))
 			return true;
-		
-		return grid[location.x,location.y].IsOccupied();	
+
+        try
+        {
+            return grid[location.x, location.y].IsOccupied();
+        }
+        catch
+        {
+            Debug.Log("failed looking for " + location);
+            return true;
+        }
 	}
 	
 	public bool IsOccupied(int x, int y)

@@ -33,7 +33,7 @@ public class OccupancyGridView : MonoBehaviour
     {
         //create the grid	
 		//TODO this probably leaks
-        grid = new OccupancyGrid(gridHeight, gridWidth);
+        grid = new OccupancyGrid(gridHeight, gridWidth );
         grid.ObjectAdded += OnObjectAdded;
 
 
@@ -68,7 +68,9 @@ public class OccupancyGridView : MonoBehaviour
 	public void LayNewTrail(int numPellets)
 	{
 		Vector3 colorVec = UnityEngine.Random.insideUnitSphere;
-        Color newColor = new Color(colorVec.x, colorVec.y, colorVec.z);
+        Color newColor = new Color(colorVec.x + ColorUtilities.brightnessBoost,
+                                   colorVec.y + ColorUtilities.brightnessBoost,
+                                   colorVec.z + ColorUtilities.brightnessBoost);
         pelletLayer.LayPelletTrail(numPellets, grid, newColor, OnBombExploded);		
 	}
 	
@@ -87,10 +89,10 @@ public class OccupancyGridView : MonoBehaviour
 		{
 			for(int j = 0; j < viewWidth; ++j)
 			{
-				Vector3 position = this.transform.position + new Vector3(i * gridX, 0f, j * gridY);
+				Vector3 position = this.transform.position + new Vector3(j * gridX, 0f, i * gridY);
 				
 				//colour the grid if it's active
-				if(grid != null) cellColor = grid.IsOccupied(i,j) ? Color.red : Color.white;
+				if(grid != null) cellColor = grid.IsOccupied(j,i) ? Color.red : Color.white;
 				
 				Gizmos.color = cellColor;
 				Gizmos.DrawWireCube(position, new Vector3(gridX, 1f, gridY)); 

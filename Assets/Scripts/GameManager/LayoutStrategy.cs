@@ -7,7 +7,8 @@ public abstract class LayoutStrategy : MonoBehaviour
 {
 	public HashSet<NewBomb> bombsInPlay;
 	public OccupancyGridView occupancyGrid;
-	
+    public StrategyView strategyView;
+
 	public virtual void OnBombDestroyed(NewBomb destroyedBomb)
 	{
 		bombsInPlay.Remove(destroyedBomb);
@@ -15,7 +16,6 @@ public abstract class LayoutStrategy : MonoBehaviour
 	
 	protected virtual void Awake()
 	{
-		bombsInPlay = new HashSet<NewBomb>();
 	}
 	
 	public virtual void AddBomb(NewBomb bomb)
@@ -31,8 +31,6 @@ public abstract class LayoutStrategy : MonoBehaviour
         }
 		
         bombsInPlay.Clear();
-		
-		CreateInitialLayout();
 	}
 	
 	//create the initial layout for the specific strategy
@@ -49,15 +47,28 @@ public abstract class LayoutStrategy : MonoBehaviour
     /// This is used to cleanup any objects we might be doing stuff with when
     /// we create a new strategy
     /// </summary>
-    public virtual void CleanupStrategy(LayoutStrategy newStrategy)
+    public virtual void CleanupStrategy()
     {
-        //transfer all the bombs to the bombs in play dataset over to the new strategy
-        foreach (NewBomb bomb in bombsInPlay)
-        {
-            newStrategy.bombsInPlay.Add(bomb);
-        }
+        //base does nothing
+    }
 
-        //clear the bomb set and reset any other variables
-        bombsInPlay.Clear();
+    public virtual void SetCurrentBombSet(HashSet<NewBomb> currentBombs)
+    {
+        bombsInPlay = currentBombs;
+
+        if (bombsInPlay.Count == 0)
+        {
+            CreateInitialLayout();
+        }
+    }
+
+    public void Init(LayoutStrategy lastStrat, HashSet<NewBomb> newBombs)
+    {
+        if (strategyView)
+        {
+            strategyView.PlayStrategyIntro(lastStrat);
+        }
+        SetCurrentBombSet(newBombs);
+
     }
 }

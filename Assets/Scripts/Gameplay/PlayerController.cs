@@ -26,11 +26,22 @@ public class PlayerController : MonoBehaviour {
     public Action<PlayerController> OnPlayerDied;
 	//for debug
 	public Vector3 currentVelocity;
+
+    bool returnedToDead;
+
+    //tracking var so we know how much boost to apply at any time
+    protected float currentBoostMult = 1.0f;
+
+    public PlayerBoost speedBoost;
+
+
 	// Use this for initialization
 	void Start () {
         alive = true;
 		lastDirection = Vector3.zero;
 		this.rigidbody.isKinematic = true;
+
+        speedBoost.Init();
 	}
 	
 	//set the timescale based on the current time
@@ -40,6 +51,8 @@ public class PlayerController : MonoBehaviour {
 		
 		//move the player based on input
 		MovePlayer();
+
+        speedBoost.UpdateBoost();
 	}
 	
 	void MovePlayer()
@@ -51,7 +64,7 @@ public class PlayerController : MonoBehaviour {
 		
 		float absHorz = Mathf.Abs(horizontalMovement);
 		float absVert = Mathf.Abs(verticalMovement);
-		Vector3 direction = Vector3.zero;
+		Vector3 newDirection = Vector3.zero;
 		//if horizontal movement then work out the direction
 		if(absHorz > absVert && 
 			absHorz > deadZone)
@@ -59,12 +72,12 @@ public class PlayerController : MonoBehaviour {
 			if(horizontalMovement > 0)
 			{
 				//we are going right		
-				direction = PelletDefs.GameRight;
+				newDirection = PelletDefs.GameRight;
 			}
 			else
 			{
 				//we are going left
-				direction = PelletDefs.GameLeft;
+				newDirection = PelletDefs.GameLeft;
 			}
 			
 		}
@@ -73,32 +86,50 @@ public class PlayerController : MonoBehaviour {
 			if(verticalMovement > 0)
 			{
 				//we are going up	
-				direction = PelletDefs.GameUp;
+				newDirection = PelletDefs.GameUp;
 			}
 			else
 			{
 				//we are going down
-				direction = PelletDefs.GameDown;
+				newDirection = PelletDefs.GameDown;
 			}
 		}
 
+        //If we've pressed the same direction button as the direction we're already
+        //going then do a speedboost
+        if (speedBoost.SpeedBoostReady() && lastDirection == newDirection && returnedToDead)
+        {
+            //set speed boost
+            speedBoost.SetBoosting();
+        }
+
 		//if we've not moved the stick keep moving the way we want
-		if(absHorz <= deadZone &&
-		   absVert <= deadZone &&
-			useLastDirection)
+        if (absHorz <= deadZone &&
+           absVert <= deadZone &&
+            useLastDirection)
+        {
+            newDirection = lastDirection;
+            returnedToDead = true;
+        }
+        else
+        {
+            lastDirection = newDirection;
+            returnedToDead = false;
+        }
+
+        
+		if(newDirection != Vector3.zero)
 		{
-			direction = lastDirection;
+			transform.forward = newDirection;	
 		}
 
-		lastDirection = direction;
-		if(direction != Vector3.zero)
-		{
-			transform.forward = direction;	
-		}
 		//we're kinematic so update the position
-		currentVelocity = (direction * moveSpeed * Time.deltaTime);
+		currentVelocity = (newDirection * moveSpeed * speedBoost.GetCurrentBoostMult() * Time.deltaTime);
 		rigidbody.position += currentVelocity;
 	}
+
+   
+
 	void SetTimeScale()
 	{
 		if(Time.time <= bulletTimeExpiration)
@@ -116,6 +147,7 @@ public class PlayerController : MonoBehaviour {
     {
         if (OnPlayerDied != null)
         {
+            Debug.Log("player died");
             OnPlayerDied(this);
         }
         this.gameObject.SetActiveRecursively(false);

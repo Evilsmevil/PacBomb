@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[AddComponentMenu("Level Generation/Fill When Empty Strat")]
+[AddComponentMenu("Strategies/Fill When Empty Strat")]
 //this will wait until all the bombs are blown up
 //before creating a bunch more
 public class RefillWhenEmptyStrategy : LayoutStrategy

@@ -21,7 +21,6 @@ public class SpawnPointSpawner : MonoBehaviour {
 		//find any spawn objects and ad them to the list
 		GameObject [] objects = GameObject.FindGameObjectsWithTag("SpawnPoint");
 		
-		Debug.Log("object count = " + objects.Length);
 		spawnPoints.AddRange(objects);
 		
 		Spawn();		
@@ -61,14 +60,11 @@ public class SpawnPointSpawner : MonoBehaviour {
 		if(spawnPoints != null)
 		{
 			int rand = Random.Range(0, spawnPoints.Count - 1);
-			Debug.Log("picking point " + rand + " is it real? " + spawnPoints[rand].transform.position);
-			
 			return spawnPoints[rand];	
 			
 		}
 		else 
 		{
-			Debug.Log("Returning null");
 			return null;
 		}
 	}

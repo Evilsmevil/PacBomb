@@ -17,11 +17,31 @@ public class BombManager : MonoBehaviour {
 	public LayoutStrategy currentLayoutStrategy;
     public LineRenderer linkLine;
     protected HashSet<GameObject> enemiesInPlay;
+    protected HashSet<NewBomb> bombsInPlay;
+
+    //how many bombs have to be destroyed before we change strategy?
+    public int strategyChangeFrequency = 7;
+    protected int totalBombsDestroyed = 0;
+    protected int bombsDestroyed = 0;
 
     public void AddBomb(NewBomb bomb)
     {
         currentLayoutStrategy.AddBomb(bomb);
         //should we check here to see if the bomb could be in range and be primed?
+    }
+
+    public void Clear()
+    {
+        currentLayoutStrategy.Reset();
+        foreach (GameObject enemy in enemiesInPlay)
+        {
+            Destroy(enemy);
+        }
+        enemiesInPlay.Clear();
+
+        occupancyGridView.Reset();
+
+        ResetBombCounters();
     }
 
     public void Reset()
@@ -34,6 +54,15 @@ public class BombManager : MonoBehaviour {
         enemiesInPlay.Clear();
 
         occupancyGridView.Reset();
+
+        ResetBombCounters();
+        SetRandomStrategy();
+    }
+
+    protected void ResetBombCounters()
+    {
+        bombsDestroyed = 0;
+        totalBombsDestroyed = 0;
     }
 
 
@@ -51,20 +80,34 @@ public class BombManager : MonoBehaviour {
 	void Awake () 
     {
         enemiesInPlay = new HashSet<GameObject>();
+        bombsInPlay = new HashSet<NewBomb>();
+        ResetBombCounters();
 	}
 
     LayoutStrategy GetRandomStrategy()
     {
-        int randomIndex = UnityEngine.Random.Range(0, strategyList.Count - 1);
+        int randomIndex = UnityEngine.Random.Range(0, strategyList.Count);
         return strategyList[randomIndex];
     }
 
 	void Start()
 	{
-        //pick a strategy
-        currentLayoutStrategy = GetRandomStrategy();
-		currentLayoutStrategy.CreateInitialLayout();	
+        SetRandomStrategy();
 	}
+
+    void SetRandomStrategy()
+    {
+        //pick a strategy
+        if (currentLayoutStrategy)
+        {
+            currentLayoutStrategy.CleanupStrategy();
+        }
+        LayoutStrategy oldStrat = currentLayoutStrategy;
+        
+        currentLayoutStrategy = GetRandomStrategy();
+        currentLayoutStrategy.Init(oldStrat, bombsInPlay);
+        //currentLayoutStrategy.SetCurrentBombSet(bombsInPlay);
+    }
 
     /// <summary>
     /// This code should deal with destroying a set of bombs and then 
@@ -73,10 +116,6 @@ public class BombManager : MonoBehaviour {
     /// <param name="bomb"></param>
     public void OnBombTriggered(NewBomb bomb)
     {
-        LayoutStrategy nextStrategy = GetRandomStrategy();
-        currentLayoutStrategy.CleanupStrategy(nextStrategy);
-        currentLayoutStrategy = nextStrategy;
-
         //get a list of bombs to explode
         List<NewBomb> bombsToExplode = FindConnectedBombs(bomb);
         
@@ -90,6 +129,14 @@ public class BombManager : MonoBehaviour {
 
         //remove the bombs from the list of bombs in play
         DestroyBombs(bombsToExplode, bomb);
+
+        if (bombsDestroyed >= strategyChangeFrequency)
+        {
+            SetRandomStrategy();
+
+            //reset the counter
+            bombsDestroyed = 0;
+        }
     }
 
     List<NewBomb> FindConnectedBombs(NewBomb bomb)
@@ -116,6 +163,9 @@ public class BombManager : MonoBehaviour {
 			currentLayoutStrategy.OnBombDestroyed(bomb);
         }
 
+        //add to the bomb destruction counter
+        bombsDestroyed += bombs.Count;
+        totalBombsDestroyed += bombs.Count;
         //send all this information somwhere so that the score can be calculated
         StartCoroutine(startBomb.ExplodeBombs(bombs));
     }
@@ -144,6 +194,7 @@ public class BombManager : MonoBehaviour {
         {
             //Give the player the number of enemies they destroyed as points
             //for each enemie - i.e enemies squared
+
             int enemyScore = ScoreKeeper.Instance.GetEnemyScore(enemies.Count, 100);
             ScoreKeeper.Instance.AddEnemyPoints(enemyScore);
             enemy.SendMessage("Kill", enemyScore);
@@ -192,17 +243,5 @@ public class BombManager : MonoBehaviour {
     void CreateLink(NewBomb origin, NewBomb destination)
     {
         origin.AddBombLink(destination, linkLine);
-
-        /*LineRenderer newRenderer = Instantiate(linkLine) as LineRenderer;
-        newRenderer.SetVertexCount(2);
-        newRenderer.SetPosition(0, origin.transform.position);
-        newRenderer.SetPosition(1, destination.transform.position);
-        newRenderer.SetColors(origin.renderer.material.color, destination.renderer.material.color);
-
-        newRenderer.transform.parent = origin.transform;
-        //we add the line to both origin and destination because we want to to blow up if either of the bombs
-        //are destroyed
-        origin.LinkIndicators.Add(newRenderer.gameObject);
-        destination.LinkIndicators.Add(newRenderer.gameObject);*/
     }
 }

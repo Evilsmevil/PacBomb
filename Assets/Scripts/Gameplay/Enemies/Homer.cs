@@ -17,6 +17,8 @@ public class Homer : BaseEnemy
         {
             Vector3 direction = player.transform.position - transform.position;
             rigidbody.AddForce(direction.normalized * acceleration * Time.fixedDeltaTime);
+
+            transform.LookAt(player.transform);
         }
     }
 

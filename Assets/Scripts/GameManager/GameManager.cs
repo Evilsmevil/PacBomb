@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// This controls a single session
@@ -11,11 +12,16 @@ public class GameManager : MonoBehaviour {
     public BombManager bombManager;
     public PlayerController player;
     public EnemySpawner enemySpawner;
+    public GameObject gameoverDisplayPrefab;
 
+    protected List<GameObject> enemies;
+    protected GameObject gameoverDisplay;
 	// Use this for initialization
 	void Start () 
     {
-	
+        gameoverDisplay = GameObject.Instantiate(gameoverDisplayPrefab) as GameObject;
+        gameoverDisplay.renderer.enabled = false;
+        player.OnPlayerDied += PlayerDied;
 	}
 	
 	// Update is called once per frame
@@ -40,5 +46,28 @@ public class GameManager : MonoBehaviour {
         player.Reset();
 
         ScoreKeeper.Instance.Reset();
+
+        //hide the death card
+        HideGameoverDisplay();
     }
+
+    void PlayerDied(PlayerController player)
+    {
+        ShowGameoverDisplay();
+        bombManager.Clear();
+        enemySpawner.StopAllCoroutines();
+        
+    }
+
+    void ShowGameoverDisplay()
+    {
+        gameoverDisplay.renderer.enabled = true;
+    }
+
+    void HideGameoverDisplay()
+    {
+        gameoverDisplay.renderer.enabled = false;
+
+    }
+
 }

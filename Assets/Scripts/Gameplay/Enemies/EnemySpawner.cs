@@ -37,6 +37,8 @@ public class EnemySpawner : MonoBehaviour {
 	{
 		//find the player
 		player = GameObject.FindGameObjectWithTag("Player");
+        initialTimeDelay = timeDelay + timeStep;
+
 	}
 	
 	IEnumerator SpawnEnemy()

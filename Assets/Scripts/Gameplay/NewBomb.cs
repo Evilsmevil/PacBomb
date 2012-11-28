@@ -20,11 +20,6 @@ public class NewBomb : MonoBehaviour {
 	protected GameObject blastSizeIndicator;
 	//the pellets that are attached to this bomb
 	
-	//sounds
-	//noises that the bomb can make
-	public AudioClip bleepSound;
-	public AudioClip explosionSound;
-	
 	public float blastScaleFactor = 4.0f;
 	//the number of pellets that have been picked up
 	protected List<Pellet> pellets;
@@ -33,7 +28,16 @@ public class NewBomb : MonoBehaviour {
     public List<GameObject> LinkIndicators { get; set; }
     protected HashSet<NewBomb> linkedBombs;
 
+    #region soundclips
+    public BaseSoundClip bombSoundsPrefab;
+    public BaseSoundClip pelletSoundsPrefab;
+    public BaseSoundClip allPelletBombSoundPrefab;
 
+    protected BaseSoundClip bombSounds;
+    protected BaseSoundClip pelletSounds;
+    protected BaseSoundClip allPelletBombSound;
+    
+    #endregion
     public Action<NewBomb> bombExploded;
     public Action<NewBomb> pelletPickedUp;
 	// Use this for initialization
@@ -45,8 +49,9 @@ public class NewBomb : MonoBehaviour {
 		if(blastSizeIndicatorPrefab)
 		{
 			blastSizeIndicator = Instantiate(blastSizeIndicatorPrefab) as GameObject;
-			blastSizeIndicator.transform.parent = this.transform;
-			blastSizeIndicator.transform.localPosition = blastSizeIndicatorPrefab.transform.localPosition;
+			blastSizeIndicator.transform.parent = this.transform.parent;
+            blastSizeIndicator.transform.position = this.transform.position;
+			//blastSizeIndicator.transform.localPosition = blastSizeIndicatorPrefab.transform.localPosition;
 
             //give it a little tint so it's possible to tell which blast radius is which
             Color tintColor = new Color(this.renderer.material.color.r,
@@ -63,7 +68,43 @@ public class NewBomb : MonoBehaviour {
 
         LinkIndicators = new List<GameObject>();
         linkedBombs = new HashSet<NewBomb>();
+
+        SetupSounds();
 	}
+
+    protected void SetupSounds()
+    {
+        LoadSoundClip(bombSoundsPrefab, ref bombSounds);
+        LoadSoundClip(pelletSoundsPrefab, ref pelletSounds);
+        LoadSoundClip(allPelletBombSoundPrefab, ref allPelletBombSound);
+        
+        /*if (bombSoundsPrefab)
+        {
+            bombSounds = GameObject.Instantiate(bombSoundsPrefab) as BaseSoundClip;
+            bombSounds.transform.parent = this.transform;
+        }
+
+        if (pelletSoundsPrefab)
+        {
+            pelletSounds = GameObject.Instantiate(pelletSoundsPrefab) as BaseSoundClip;
+            pelletSounds.transform.parent = this.transform;
+        }
+
+        if (allPelletBombSound)
+        {
+            allPelletBombSound = GameObject.Instantiate(allPelletBombSoundPrefab) as BaseSoundClip;
+            allPelletBombSound.transform.parent = this.transform;
+        }*/
+    }
+
+    protected void LoadSoundClip(BaseSoundClip soundPrefab, ref BaseSoundClip soundVar)
+    {
+        if (soundPrefab)
+        {
+            soundVar = GameObject.Instantiate(soundPrefab) as BaseSoundClip;
+            soundVar.transform.parent = this.transform;
+        }
+    }
 
     public void Reset()
     {
@@ -76,7 +117,7 @@ public class NewBomb : MonoBehaviour {
             Destroy(p.gameObject);
         }
         pellets.Clear();
-
+        Destroy(blastSizeIndicator.gameObject);
         Destroy(this.gameObject);
     }
 	
@@ -114,7 +155,10 @@ public class NewBomb : MonoBehaviour {
 		UpdateExplosionIndicator();
 		
 		//play a sound
-		Camera.mainCamera.audio.PlayOneShot(bleepSound);
+        if (pelletSounds)
+        {
+            pelletSounds.PlayNextClip();
+        }
 	}
 	
 	/// <summary>
@@ -153,7 +197,6 @@ public class NewBomb : MonoBehaviour {
 		//now we have our list we can explode our bombs
 		for(int i = 0; i < bombList.Count; ++i)
 		{
-			Debug.Log("Exploding " + bombList[i].name + " in " + (i * 0.2f) + " seconds");
 			bombList[i].ExplodeBomb(); // this will hide the go's not destroy them
 			yield return new WaitForSeconds(0.2f);
 		}
@@ -204,31 +247,43 @@ public class NewBomb : MonoBehaviour {
 		}
 		
 		//how many more bombs are there?
-		Debug.Log("there are " + bombsInRange.Count + " bombs in range");
 		return bombsInRange;
 	}
 	
     public void ExplodeBomb(float delay = 0.0f)
-    {		
-		Camera.mainCamera.audio.PlayOneShot(explosionSound);
-		
+    {
+        bool pelletsComplete = pellets.Count == 0;
         //destroy the remaining pellets
         foreach (Pellet pellet in pellets)
         {
             pellet.ExplodeAsUncollected();
         }
 
-        //DestroyEnemies();
 
-        //destroy the bomb itself
-        //TODO work out a way to dispose the delegate without leaking
-        //Destroy(gameObject);
+        //hide the bomb
 		this.renderer.enabled = false;
 		this.blastSizeIndicator.renderer.enabled = false;
 		
 		//add to the score - always make bomb worth at least 1 pellets worth of points
 		if(pelletsPickedUp == 0) pelletsPickedUp = 1;
 		ScoreKeeper.Instance.AddBombPoints(pelletsPickedUp * ScoreKeeper.baseBombPoints);
+
+        //play the right sound depending on if we picked up all the pellets or not
+        if (pelletsComplete)
+        {
+            if (allPelletBombSound)
+            {
+                allPelletBombSound.PlayNextClip();
+            }
+        }
+        else
+        {
+            if (bombSounds)
+            {
+                bombSounds.PlayNextClip();
+            }
+        }
+
 
     }
 
@@ -314,5 +369,4 @@ public class NewBomb : MonoBehaviour {
         }
 
     }
-	
 }

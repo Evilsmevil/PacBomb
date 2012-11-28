@@ -1,77 +1,86 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.20506</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{A2FED290-A059-0C5B-C023-86DFC1342FF2}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>
-    </RootNamespace>
-    <AssemblyName>Assembly-CSharp</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>10.0.20506</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{A2FED290-A059-0C5B-C023-86DFC1342FF2}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace></RootNamespace>
+	<AssemblyName>Assembly-CSharp</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>Temp\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;UNITY_3_5_5;UNITY_3_5;UNITY_EDITOR;ENABLE_PROFILER;UNITY_STANDALONE_WIN;ENABLE_GENERICS;ENABLE_DUCK_TYPING;ENABLE_TERRAIN;ENABLE_MOVIES;ENABLE_WEBCAM;ENABLE_MICROPHONE;ENABLE_NETWORK;ENABLE_CLOTH;ENABLE_WWW;ENABLE_SUBSTANCE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>0169</NoWarn>
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>Temp\bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE;UNITY_3_5_5;UNITY_3_5;UNITY_EDITOR;ENABLE_PROFILER;UNITY_WEBPLAYER;ENABLE_GENERICS;ENABLE_DUCK_TYPING;ENABLE_TERRAIN;ENABLE_MOVIES;ENABLE_WEBCAM;ENABLE_MICROPHONE;ENABLE_NETWORK;ENABLE_CLOTH;ENABLE_WWW;ENABLE_SUBSTANCE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>Temp\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>0169</NoWarn>
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>Temp\bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
+	<Reference Include="System" />
     <Reference Include="System.XML" />
-    <Reference Include="System.Core" />
-    <Reference Include="UnityEngine">
-      <HintPath>A:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor">
-      <HintPath>A:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
-    </Reference>
+	<Reference Include="System.Core" />
+	<Reference Include="UnityEngine">
+	  <HintPath>A:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEditor">
+	  <HintPath>A:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\DataStructures\OccupancyGrid.cs" />
-    <Compile Include="Assets\Scripts\DataStructures\OccupancyGridView.cs" />
-    <Compile Include="Assets\Scripts\GameManager\TimeRefillStrategy.cs" />
-    <Compile Include="Assets\Scripts\GUI\ScoreDisplay.cs" />
-    <Compile Include="Assets\Scripts\GUI\ScoreLabel.cs" />
-    <Compile Include="Assets\Scripts\GameManager\BombManager.cs" />
-    <Compile Include="Assets\Scripts\GameManager\GameManager.cs" />
-    <Compile Include="Assets\Scripts\GameManager\LayoutStrategy.cs" />
-    <Compile Include="Assets\Scripts\GameManager\RefillWhenEmptyStrategy.cs" />
-    <Compile Include="Assets\Scripts\GameManager\ReplacementStrategy.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\BalanceSettings.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Bomb.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Defs.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Enemies\BaseEnemy.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Enemies\EnemySpawner.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Enemies\Homer.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Enemies\Rusher.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\NewBomb.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Pellet.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\PelletLayer.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\PelletTrail.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\PelletTrailManager.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\PlayerController.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\ScoreKeeper.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\SpawnPointSpawner.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Utils.cs" />
-    <Compile Include="Assets\iTween\Plugins\iTween.cs" />
+     <Compile Include="Assets\Scripts\DataStructures\OccupancyGrid.cs" />
+     <Compile Include="Assets\Scripts\DataStructures\OccupancyGridView.cs" />
+     <Compile Include="Assets\Scripts\GUI\ScoreDisplay.cs" />
+     <Compile Include="Assets\Scripts\GUI\ScoreLabel.cs" />
+     <Compile Include="Assets\Scripts\GameManager\BombManager.cs" />
+     <Compile Include="Assets\Scripts\GameManager\GameManager.cs" />
+     <Compile Include="Assets\Scripts\GameManager\LayoutStrategy.cs" />
+     <Compile Include="Assets\Scripts\GameManager\RefillWhenEmptyStrategy.cs" />
+     <Compile Include="Assets\Scripts\GameManager\ReplacementStrategy.cs" />
+     <Compile Include="Assets\Scripts\GameManager\StrategyViews\StrategyView.cs" />
+     <Compile Include="Assets\Scripts\GameManager\TimeRefillStrategy.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\BalanceSettings.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Bomb.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Defs.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Enemies\BaseEnemy.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Enemies\EnemySpawner.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Enemies\Homer.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Enemies\Rusher.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\NewBomb.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Pellet.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\PelletLayer.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\PelletTrail.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\PelletTrailManager.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\PlayerBoost.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\PlayerController.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\ScoreKeeper.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\SpawnPointSpawner.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Utils.cs" />
+     <Compile Include="Assets\Scripts\NonGameplay\Misc\AudioMute.cs" />
+     <Compile Include="Assets\Scripts\NonGameplay\TitleScreen\TitleScreenManager.cs" />
+     <Compile Include="Assets\Scripts\Sounds\BaseSoundClip.cs" />
+     <Compile Include="Assets\Scripts\Sounds\RandomSoundArray.cs" />
+     <Compile Include="Assets\Scripts\Sounds\SequentialSoundArray.cs" />
+     <Compile Include="Assets\Scripts\Utility\ColorGenerator.cs" />
+     <Compile Include="Assets\Scripts\Utility\ColorUtilities.cs" />
+     <Compile Include="Assets\iTween\Plugins\iTween.cs" />
+     <None Include="Assets\Sounds\Digital_SFX_Set\readme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -81,4 +90,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  
 </Project>
