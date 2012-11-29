@@ -54,12 +54,13 @@ public class NewBomb : MonoBehaviour {
 			//blastSizeIndicator.transform.localPosition = blastSizeIndicatorPrefab.transform.localPosition;
 
             //give it a little tint so it's possible to tell which blast radius is which
-            Color tintColor = new Color(this.renderer.material.color.r,
-                                        this.renderer.material.color.g,
-                                        this.renderer.material.color.b,
-                                        blastSizeIndicator.renderer.material.color.a);
-
-            blastSizeIndicator.renderer.material.color = tintColor;
+            Color startColor = this.renderer.material.color;
+            Color tintColor = new Color(startColor.r,
+                                        startColor.g,
+                                        startColor.b,
+                                        blastSizeIndicator.renderer.material.GetColor("_TintColor").a);
+            blastSizeIndicator.renderer.material.SetColor("_TintColor", tintColor);
+            //blastSizeIndicator.renderer.material.color = tintColor;
         }
 		else
 		{
