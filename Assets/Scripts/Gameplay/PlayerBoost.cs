@@ -18,7 +18,7 @@ public class PlayerBoost
 
     public void Init()
     {
-        lastBoostTime = 0f;
+        lastBoostTime = Time.time + 0.02f;
     }
 
     public void SetBoosting()
@@ -44,7 +44,8 @@ public class PlayerBoost
     public bool SpeedBoostReady()
     {
         float currentTime = Time.time;
-        if (currentTime >= lastBoostTime + boostCooldownTime)
+        float nextBoostTime = lastBoostTime + boostCooldownTime;
+        if (currentTime >= nextBoostTime)
         {
             return true;
         }

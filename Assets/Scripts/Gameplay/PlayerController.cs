@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 
 /// <summary>
@@ -31,9 +32,11 @@ public class PlayerController : MonoBehaviour {
 
     //tracking var so we know how much boost to apply at any time
     protected float currentBoostMult = 1.0f;
+    protected float baseSpeedMult = 1.0f;
 
     public PlayerBoost speedBoost;
 
+    List<BaseStatusEffect> effects;
 
 	// Use this for initialization
 	void Start () {
@@ -42,18 +45,39 @@ public class PlayerController : MonoBehaviour {
 		this.rigidbody.isKinematic = true;
 
         speedBoost.Init();
+
+        effects = new List<BaseStatusEffect>();
 	}
 	
 	//set the timescale based on the current time
 	void Update()
 	{
 		//SetTimeScale();
-		
+
+        //reset effects - they must be applied every frame
+        ResetEffects();
+
+        ApplyStatusEffects();
+
+        speedBoost.UpdateBoost();
+
 		//move the player based on input
 		MovePlayer();
 
-        speedBoost.UpdateBoost();
+
+
+
 	}
+
+    //this is kind of gross, right now the player controller
+    //sort of needs to know about all the effects that could change
+    //one way of getting around this could be to provide a list of 
+    //public methods through an effects API - this way we know about the things that
+    //the statuses can actually change
+    protected void ResetEffects()
+    {
+        baseSpeedMult = 1.0f;
+    }
 	
 	void MovePlayer()
 	{
@@ -124,13 +148,11 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		//we're kinematic so update the position
-		currentVelocity = (newDirection * moveSpeed * speedBoost.GetCurrentBoostMult() * Time.deltaTime);
+		currentVelocity = (newDirection * (moveSpeed * baseSpeedMult) * speedBoost.GetCurrentBoostMult() * Time.deltaTime);
 		rigidbody.position += currentVelocity;
 	}
 
-   
-
-	void SetTimeScale()
+   void SetTimeScale()
 	{
 		if(Time.time <= bulletTimeExpiration)
 		{
@@ -165,15 +187,18 @@ public class PlayerController : MonoBehaviour {
         rigidbody.position = new Vector3(0, rigidbody.position.y, 0);
         lastDirection = Vector3.zero;
 
+        //remove any effects that might have been active
+        effects.Clear();
+
     }
 	public void ModifyMoveSpeedByScalar(float multiplier)
 	{
 		moveSpeed *= multiplier	;
 	}
-	
-	public void SetMoveSpeedAbsolute(float newSpeed)
+
+    public void SetBaseSpeedMultiplier(float newMult)
 	{
-		moveSpeed = newSpeed;	
+        baseSpeedMult = newMult;
 	}
 	
 	//set the bullet time expiration timer based on what time is is and how
@@ -182,5 +207,34 @@ public class PlayerController : MonoBehaviour {
 	{
 		bulletTimeExpiration = Time.time + duration;	
 	}
+
+    /// <summary>
+    /// Apply all status effects here
+    /// </summary>
+    protected void ApplyStatusEffects()
+    {
+        //find all our status effects
+
+        Collider [] colliders = Physics.OverlapSphere(transform.position, 1.0f);
+
+        //clear our effects list
+        effects.Clear();
+
+        foreach (Collider col in colliders)
+        {
+            BaseStatusEffect effect = col.GetComponent<BaseStatusEffect>();
+
+            if(effect)
+            {
+                effects.Add(effect);
+            }
+
+        }
+
+        foreach (BaseStatusEffect effect in effects)
+        {
+            effect.ApplyStatusEffect(this);
+        }
+    }
 	
 }

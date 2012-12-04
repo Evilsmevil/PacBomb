@@ -154,4 +154,38 @@ public class ColorUtilities
         Debug.Log("RGB output is R:" + r + " G:" + g + " B:" + b);
         return new Color(r, g, b);
     }
+
+    //return one of the base colors; red green or blue
+    static int lastColor = 0;
+    public static Color GetRandomRGB()
+    {
+        int randomColour = UnityEngine.Random.Range(0, 3);
+
+        //we want some variation so don't generate the same colour twice in a row
+        if (randomColour == lastColor)
+        {
+            randomColour = (randomColour + 1) % 3;
+        }
+
+        lastColor = randomColour;
+        Color newColor;
+        switch (randomColour)
+        {
+            case 0:
+                newColor = Color.red;
+                break;
+            case 1:
+                newColor = Color.green;
+                break;
+            case 2:
+                newColor = Color.blue;
+                break;
+            default:
+                newColor = Color.white;
+                break;
+        }
+        Debug.Log("Generated "+ randomColour + " which is "  + newColor);
+        return newColor;
+
+    }
 }

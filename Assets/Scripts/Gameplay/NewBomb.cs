@@ -15,6 +15,8 @@ public class NewBomb : MonoBehaviour {
 	public float minBlastSize;
 	public LayerMask enemyLayer;
 	public LayerMask bombLayer;
+
+    public SphereCollider effectTriggerCollider;
 	//you want something
 	public GameObject blastSizeIndicatorPrefab;
 	protected GameObject blastSizeIndicator;
@@ -27,6 +29,7 @@ public class NewBomb : MonoBehaviour {
     public bool readyToBlow = false;
     public List<GameObject> LinkIndicators { get; set; }
     protected HashSet<NewBomb> linkedBombs;
+
 
     #region soundclips
     public BaseSoundClip bombSoundsPrefab;
@@ -50,7 +53,7 @@ public class NewBomb : MonoBehaviour {
 		{
 			blastSizeIndicator = Instantiate(blastSizeIndicatorPrefab) as GameObject;
 			blastSizeIndicator.transform.parent = this.transform.parent;
-            blastSizeIndicator.transform.position = this.transform.position;
+            blastSizeIndicator.transform.position = new Vector3(this.transform.position.x, this.transform.position.y - 1, this.transform.position.z);
 			//blastSizeIndicator.transform.localPosition = blastSizeIndicatorPrefab.transform.localPosition;
 
             //give it a little tint so it's possible to tell which blast radius is which
@@ -60,6 +63,9 @@ public class NewBomb : MonoBehaviour {
                                         startColor.b,
                                         blastSizeIndicator.renderer.material.GetColor("_TintColor").a);
             blastSizeIndicator.renderer.material.SetColor("_TintColor", tintColor);
+            this.renderer.material.color = this.renderer.material.color.BumpedColour(0.7f);
+            
+
             //blastSizeIndicator.renderer.material.color = tintColor;
         }
 		else
@@ -147,6 +153,7 @@ public class NewBomb : MonoBehaviour {
 		//we can be blown up by other bombs if pick up a pellet
 		readyToBlow = true;
 
+        //tell anything that cares that we picked up a pellet
         pelletPickedUp(this);
 
 		//find the pellet and remove it from the list
@@ -154,13 +161,26 @@ public class NewBomb : MonoBehaviour {
 		
 		//update the explosion prefab
 		UpdateExplosionIndicator();
-		
+
+        //update the status effect trigger
+        UpdateStatusEffectTrigger();
+
 		//play a sound
         if (pelletSounds)
         {
             pelletSounds.PlayNextClip();
         }
 	}
+    
+    protected void UpdateStatusEffectTrigger()
+    {
+        //get the collider and set the size to the the size of the explosion radius
+        if (effectTriggerCollider)
+        {
+            effectTriggerCollider.radius = (GetBlastRadius() / blastScaleFactor) + 1;
+        }
+
+    }
 	
 	/// <summary>
 	/// Updates the explosion inidicator which shows how big the blast radius will be
@@ -354,8 +374,16 @@ public class NewBomb : MonoBehaviour {
             //create the link
             LineRenderer newRenderer = Instantiate(linkLine) as LineRenderer;
             newRenderer.SetVertexCount(2);
-            newRenderer.SetPosition(0, this.transform.position);
-            newRenderer.SetPosition(1, otherBomb.transform.position);
+            Vector3 lineStart = new Vector3(this.transform.position.x,
+                                this.transform.position.y - 1,
+                                this.transform.position.z);
+
+            Vector3 lineEnd = new Vector3(otherBomb.transform.position.x,
+                              otherBomb.transform.position.y - 1,
+                              otherBomb.transform.position.z);
+
+            newRenderer.SetPosition(0, lineStart);
+            newRenderer.SetPosition(1, lineEnd);
             newRenderer.SetWidth(1.0f, 0.0f);
             newRenderer.SetColors(this.renderer.material.color, otherBomb.renderer.material.color);
 

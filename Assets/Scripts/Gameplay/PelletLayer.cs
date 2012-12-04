@@ -112,7 +112,7 @@ public class PelletLayer : MonoBehaviour
 	{
 		Pellet newPellet = Instantiate(pelletObject) as Pellet;
 		newPellet.name = "pellet " + pellets.Count;
-		newPellet.renderer.material.color = color;
+		newPellet.renderer.material.color = color.BumpedColour(0.8f);
 		grid.AddObject(location, newPellet.gameObject);
 		pellets.Add(newPellet);
 	}
